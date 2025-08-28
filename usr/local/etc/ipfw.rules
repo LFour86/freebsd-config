@@ -1,0 +1,43 @@
+# Basic Settings and Initialization
+cmd="ipfw -q add"
+ipfw -q -f flush
+
+# Loop back interface and local traffic control
+$cmd 10 allow all from any to any via lo0
+$cmd 20 deny all from any to 127.0.0.0/8
+$cmd 30 deny all from 127.0.0.0/8 to any
+$cmd 40 deny tcp from any to any frag
+$cmd 41 deny tcp from any to any tcpflags fin,urg,psh
+$cmd 45 deny ip from { 10.0.0.0/8, 172.16.0.0/12 } to any in
+$cmd 46 allow ip from 192.168.0.0/16 to any
+$cmd 47 allow ip from any to 192.168.1.1  # Allow network portal login
+$cmd 48 allow ip from any to 172.25.249.64
+
+# Security protection and status detection
+$cmd 50 check-state
+$cmd 60 allow tcp from any to any established
+$cmd 70 allow ip from me to any out keep-state
+$cmd 80 allow icmp from any to me icmptypes 0,3,8,11  # 0=response, 8=request, 3/11=error report
+$cmd 82 allow icmp from any to any icmptypes 3,11  # Type 3=Destination unreachable, 11=timeout
+$cmd 85 allow icmp from me to any icmptypes 0 out  # Allow local Ping response
+
+# Service Port Release Rules
+$cmd 100 allow tcp from any to me 80 in    # HTTP
+$cmd 101 allow tcp from any to me 443 in   # HTTPS
+$cmd 125 deny log tcp from any to me 22 in # Record illegal SSH attempts
+$cmd 120 allow tcp from any to me 22 in  # Allow SSH
+$cmd 130 allow udp from me 68 to any 67 out       # DHCP
+$cmd 131 allow udp from any 67 to me 68 in  # DHCP response
+$cmd 132 allow udp from any to me 53 in     # DNS query
+$cmd 150 deny log tcp from any to any 8333,4444,5555,31337,6667 out  # Record sensitive ports
+$cmd 151 deny log udp from any to any 8333,4444,5555 out
+$cmd 170 allow udp from 192.168.1.10,192.168.1.20 to me 5353 in # MDNS (Printer/AirPlay)
+$cmd 180 allow tcp from any to me 443 in setup limit src-addr 50  # Each IP is limited to 50 connections
+$cmd 181 allow tcp from any to me 443 established  # Release established connection
+$cmd 191 allow ip from any to any
+$cmd 200 allow ip from 192.168.0.0/16 to any
+
+# Default Policy and Logging
+$cmd 500 deny log tcp from any to any 22,25,8333,4444,5555  # Only record rejected traffic from high-risk ports (SSH/mining ports)
+$cmd 500 deny log udp from any to any 22,25,8333,4444,5555  # Only record rejected traffic from high-risk ports (SSH/mining ports)
+$cmd 501 deny all from any to any  # Silently reject other traffic

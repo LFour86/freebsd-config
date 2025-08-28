@@ -1,0 +1,14 @@
+#!/bin/sh
+
+TEMPLATE="/etc/motd.template"
+
+if [ -f "${TEMPLATE}" ]; then
+	cat "${TEMPLATE}"
+fi
+
+echo "		                                             "
+echo "					Hostname: $(hostname)"
+echo "					OS: $(uname -srm)    "
+echo "					Uptime: $(uptime)    "
+echo "	                                       		     "
+echo "	                                       		     "
