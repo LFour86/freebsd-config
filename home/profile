@@ -1,0 +1,67 @@
+#
+# .profile - Bourne Shell startup script for login shells
+#
+# see also sh(1), environ(7).
+#
+
+# These are normally set through /etc/login.conf.  You may override them here
+# if wanted.
+# PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:$HOME/bin; export PATH
+
+# Setting TERM is normally done through /etc/ttys.  Do only override
+# if you're sure that you'll never log in via telnet or xterm or a
+# serial line.
+# TERM=xterm; 	export TERM
+
+EDITOR=vi;   	export EDITOR
+PAGER=less;  	export PAGER
+
+# set ENV to a file invoked each time sh is started for interactive use.
+ENV=$HOME/.shrc; export ENV
+
+# Let sh(1) know it's at home, despite /home being a symlink.
+if [ "$PWD" != "$HOME" ] && [ "$PWD" -ef "$HOME" ] ; then cd ; fi
+
+# Query terminal size; useful for serial lines.
+if [ -x /usr/bin/resizewin ] ; then /usr/bin/resizewin -z ; fi
+
+# Display a random cookie on each login.
+if [ -x /usr/bin/fortune ] ; then /usr/bin/fortune freebsd#-tips ; fi
+
+# Wayland
+#export XDG_RUNTIME_DIR=/var/run/user/`id -u`
+
+# Fcitx5
+export XIM_PROGRAM=fcitx
+export XIM=fcitx
+export XMODIFIERS='@im=fcitx'
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+
+# Wayland
+export LIBVA_DRIVER_NAME=nvidia
+export CLUTTER_BACKEND=wayland
+export XDG_SESSION_TYPE=wayland
+export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+export MOZ_ENABLE_WAYLAND=1
+export GBM_BACKEND=nvidia-drm
+export __GLX_VENDOR_LIBRARY_NAME=nvidia
+export WLR_NO_HARDWARE_CURSORS=1
+export WLR_BACKEND=vulkan
+export QT_QPA_PLATFORM=wayland
+export GDK_BACKEND=wayland
+
+# Path
+typeset -U PATH path
+path=("$HOME/bin" "/usr/local/bin" "$path[@]")
+export PATH
+
+# xdg directories
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_RUNTIME_DIR="/var/run/user/`id -u`"
+
+LD_LIBMAP       libGLX.so       libGL-NVIDIA.so
+                libGLX.so.0     libGL-NVIDIA.so.1
+. "$HOME/.cargo/env"
