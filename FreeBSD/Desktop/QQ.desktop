@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=QQ
+Exec=/compat/linux/opt/QQ/qq --no-sandbox --in-process-gpu %U
+Terminal=false
+Type=Application
+Icon=/compat/linux/usr/share/icons/hicolor/512x512/apps/qq.png
+StartupWMClass=QQ
+Categories=Network;
+Comment=QQ
+MimeType=x-scheme-handler/tencent;

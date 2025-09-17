@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=WeChat
+Comment=WeChat
+Exec=/compat/linux/opt/wechat/wechat
+Terminal=false
+Type=Application
+Encoding=UTF-8
+Icon=/compat/linux/opt/wechat/icons/wechat.png
+Path=
+StartupNotify=false
+Categories=Network
