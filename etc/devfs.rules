@@ -1,2 +1,0 @@
-add path 'dri/*' mode 0666 group video
-add path 'drm/*' mode 0666 group video
