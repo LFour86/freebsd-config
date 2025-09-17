@@ -1,6 +1,0 @@
-# Start
-sudo pkg ins export MOZ_ENABLE_WAYLAND=1
-sudo mkdir -p /var/run/user/"$(id -u)"
-sudo chown -R "${USER}":"$(id -u)" /var/run/user/"$(id -u)"
-sudo chmod 700 /var/run/user/"$(id -u)"
-ck-launch-session dbus-run-session XXX
