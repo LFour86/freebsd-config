@@ -1,43 +1,68 @@
-# Basic Settings and Initialization
+# 基本设置和初始化
 cmd="ipfw -q add"
-ipfw -q -f flush
+ipfw -q -f flush  # 清空现有规则
 
-# Loop back interface and local traffic control
+# 允许本地流量（loopback）
 $cmd 10 allow all from any to any via lo0
+
+# 拒绝本地回环地址的流量
 $cmd 20 deny all from any to 127.0.0.0/8
 $cmd 30 deny all from 127.0.0.0/8 to any
+
+# 拒绝分片的 TCP 流量
 $cmd 40 deny tcp from any to any frag
+
+# 拒绝带有 FIN, URG, PSH 标志的 TCP 流量
 $cmd 41 deny tcp from any to any tcpflags fin,urg,psh
+
+# 拒绝内网地址（例如 10.0.0.0/8，172.16.0.0/12）向外的流量
 $cmd 45 deny ip from { 10.0.0.0/8, 172.16.0.0/12 } to any in
+
+# 允许内网流量（192.168.0.0/16）
 $cmd 46 allow ip from 192.168.0.0/16 to any
-$cmd 47 allow ip from any to 192.168.1.1  # Allow network portal login
+
+# 允许访问特定地址（例如网关，登录页面等）
+$cmd 47 allow ip from any to 192.168.1.1
+
+# 允许访问特定服务
 $cmd 48 allow ip from any to 172.25.249.64
 
-# Security protection and status detection
-$cmd 50 check-state
-$cmd 60 allow tcp from any to any established
-$cmd 70 allow ip from me to any out keep-state
-$cmd 80 allow icmp from any to me icmptypes 0,3,8,11  # 0=response, 8=request, 3/11=error report
-$cmd 82 allow icmp from any to any icmptypes 3,11  # Type 3=Destination unreachable, 11=timeout
-$cmd 85 allow icmp from me to any icmptypes 0 out  # Allow local Ping response
+# 保护和状态检测
+$cmd 50 check-state  # 状态检查
+$cmd 60 allow tcp from any to any established  # 允许已建立连接的流量
+$cmd 70 allow ip from me to any out keep-state  # 允许来自我的流量出站并维持连接状态
 
-# Service Port Release Rules
-$cmd 100 allow tcp from any to me 80 in    # HTTP
-$cmd 101 allow tcp from any to me 443 in   # HTTPS
-$cmd 125 deny log tcp from any to me 22 in # Record illegal SSH attempts
-$cmd 120 allow tcp from any to me 22 in  # Allow SSH
-$cmd 130 allow udp from me 68 to any 67 out       # DHCP
-$cmd 131 allow udp from any 67 to me 68 in  # DHCP response
-$cmd 132 allow udp from any to me 53 in     # DNS query
-$cmd 150 deny log tcp from any to any 8333,4444,5555,31337,6667 out  # Record sensitive ports
-$cmd 151 deny log udp from any to any 8333,4444,5555 out
-$cmd 170 allow udp from 192.168.1.10,192.168.1.20 to me 5353 in # MDNS (Printer/AirPlay)
-$cmd 180 allow tcp from any to me 443 in setup limit src-addr 50  # Each IP is limited to 50 connections
-$cmd 181 allow tcp from any to me 443 established  # Release established connection
-$cmd 191 allow ip from any to any
-$cmd 200 allow ip from 192.168.0.0/16 to any
+# ICMP（Ping）规则优化：允许必要的 ICMP 类型
+$cmd 80 allow icmp from any to me icmptypes 0,3,8,11  # 0=回应, 8=请求, 3/11=错误报告
+$cmd 82 allow icmp from any to any icmptypes 3,11  # 3=目标不可达, 11=超时
+$cmd 85 allow icmp from me to any icmptypes 0 out  # 允许本机 Ping 回应
 
-# Default Policy and Logging
-$cmd 500 deny log tcp from any to any 22,25,8333,4444,5555  # Only record rejected traffic from high-risk ports (SSH/mining ports)
-$cmd 500 deny log udp from any to any 22,25,8333,4444,5555  # Only record rejected traffic from high-risk ports (SSH/mining ports)
-$cmd 501 deny all from any to any  # Silently reject other traffic
+# 服务端口开放
+$cmd 100 allow tcp from any to me 80 in  # 允许 HTTP
+$cmd 101 allow tcp from any to me 443 in  # 允许 HTTPS
+$cmd 120 allow tcp from any to me 22 in  # 允许 SSH
+$cmd 130 allow udp from me 68 to any 67 out  # 允许 DHCP 请求
+$cmd 131 allow udp from any 67 to me 68 in  # 允许 DHCP 响应
+$cmd 132 allow udp from any to me 53 in  # 允许 DNS 查询
+
+# 记录敏感端口的流量
+$cmd 150 deny log tcp from any to any 8333,4444,5555,31337,6667 out  # 记录敏感端口的 TCP 流量
+$cmd 151 deny log udp from any to any 8333,4444,5555 out  # 记录敏感端口的 UDP 流量
+
+# 特定服务流量限制
+$cmd 180 allow tcp from any to me 443 in setup limit src-addr 50  # 每个 IP 限制最大连接数为 50
+$cmd 181 allow tcp from any to me 443 established  # 允许已建立的 443 连接
+
+# 内网流量管理
+$cmd 170 allow udp from 192.168.1.10,192.168.1.20 to me 5353 in  # MDNS (如打印机/ AirPlay)
+
+# 默认策略
+$cmd 191 allow ip from any to any  # 默认允许流量（可以考虑稍后根据需求细化）
+$cmd 200 allow ip from 192.168.0.0/16 to any  # 允许内网访问任何目标
+
+# 高风险端口日志记录
+$cmd 500 deny log tcp from any to any 22,25,8333,4444,5555  # 仅记录拒绝的流量（SSH/mining端口等）
+$cmd 501 deny log udp from any to any 22,25,8333,4444,5555  # 记录拒绝的 UDP 流量（SSH/mining端口等）
+
+# 最终规则：静默拒绝所有未明确允许的流量
+$cmd 502 deny log ip from any to any  # 静默拒绝所有流量
