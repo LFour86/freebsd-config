@@ -12,18 +12,20 @@ freebsd-config/
 ├── etc/
 │   ├── rc.conf
 │   ├── loader.conf
-│   └── sysctl.conf
+|   ├── sysctl.conf
+│   └── ...
 ├── boot/
-│   └── loader.conf additions or modules
-├── usr_local/
-│   └── etc/
-│       ├── ipfw.rules
-│       ├── ipfw_autoswitch.sh
-│       └── other local configs
+|   ├── loader.conf
+│   └── ...
+├── usr/local/
+│       └── etc/
+│           ├── ipfw.rules
+│           ├── rc.motd
+│           └── ...
 ├── config/
-│   └── application / desktop / user-level configs (e.g. Hyprland, Wayland, .config)
+│
 ├── desktop/
-│   └── Hyprland / window manager / UI configs
+│
 └── README.md
 ```
 
