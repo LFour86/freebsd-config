@@ -31,11 +31,11 @@ freebsd-config/
 
 Each folder is logically separated:
 
-- `etc/` — core system configuration files (`rc.conf`, `loader.conf`, `sysctl.conf`)  
+- `etc/` — core system configuration files
 - `boot/` — bootloader or module-loading adjustments  
-- `usr_local/etc/` — custom local scripts and firewall rules  
+- `usr/local/etc/` — user`s script and rules
 - `config/` — user-level application configuration  
-- `desktop/` — desktop / Wayland / Hyprland related configs  
+- `desktop/` — desktop apps configs  
 
 ---
 
