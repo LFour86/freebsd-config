@@ -134,14 +134,6 @@ You can integrate it via:
 - Use `ipfw list` and `ipfw show` to monitor rule hits and adjust priorities.  
 - If Fail2ban logs start flooding, adjust your `deny log` rules to restrict logging only to sensitive ports or interfaces.
 
----
-
-## 🚀 Roadmap & To‑Do
-
-- [ ] Add support for **wireless captive portal auto-detection**  
-- [ ] Add **VPN auto rules** (for WireGuard / OpenVPN)  
-- [ ] Modular rule sets (e.g. `ipfw.rules.home` / `ipfw.rules.public`)  
-- [ ] More desktop / Wayland environment presets (KDE, Sway, etc.)  
 
 ---
 
