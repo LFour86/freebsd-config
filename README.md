@@ -61,9 +61,6 @@ This configuration aims to deliver:
 6. **Stylish TTY / console boot**  
    Enhanced console visuals and cleaner boot output.
 
-7. **Hyprland desktop environment**  
-   Pre-made configs for Hyprland / Wayland sessions.
-
 ---
 
 ## 🛠️ Usage Instructions
