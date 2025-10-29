@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=STM32CubeMX
+Exec=/compat/linux/home/lfour/STM32CubeMX/STM32CubeMX %U
+Terminal=false
+Type=Application
+Icon=/compat/linux/home/lfour/STM32CubeMX/help/STM32CubeMX.png
+StartupWMClass=STM32CubeMX
+Categories=Development;
+Comment=STM32CubeMX
+MimeType=application/x-stm32cube-ioc;

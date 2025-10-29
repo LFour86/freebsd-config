@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=v2rayN
+Comment=v2rayN for Red Hat Enterprise Linux
+Exec=/compat/linux/opt/v2rayN/v2rayN
+Icon=/compat/linux/opt/v2rayN/v2rayN.png
+Terminal=false
+Categories=Network;
