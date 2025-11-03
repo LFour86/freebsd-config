@@ -10,20 +10,26 @@ The goal is to provide a highly reproducible setup that can be deployed across m
 ```text
 freebsd-config/
 ├── etc/
+|   ├── devfs.rules
+|   ├── fstab
+|   ├── make.conf
+|   ├── motd.template
 │   ├── rc.conf
-│   ├── loader.conf
-|   ├── sysctl.conf
-│   └── ...
+│   └── sysctl.conf
+|
 ├── boot/
-|   ├── loader.conf
-│   └── ...
+|   ├── device.hints
+│   └── loader.conf
+|
 ├── usr/local/
 │       └── etc/
 │           ├── ipfw.rules
-│           ├── rc.motd
-│           └── ...
+│           └── rc.motd
+|
 ├── config/
-│
+|      ├── fastfetch/
+|      └── wofi/
+|
 ├── desktop/
 │
 └── README.md
