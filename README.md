@@ -78,37 +78,16 @@ Here’s how to apply this configuration on a new FreeBSD machine:
    git clone https://github.com/LFour86/freebsd-config.git
    cd freebsd-config
    ```
-
-2. **Backup existing configs**  
-   E.g.:
+2. override your config
+   E.g.
    ```sh
-   sudo cp /etc/rc.conf /etc/rc.conf.bak
-   sudo cp /boot/loader.conf /boot/loader.conf.bak
-   sudo cp /etc/sysctl.conf /etc/sysctl.conf.bak
+   sudo mv /etc/rc.conf /etc/rc.conf.bak
+   sudo cp -r etc/rc.conf rc.conf
    ```
-
-3. **Copy selective files**  
-   For example:
-   ```sh
-   sudo cp etc/rc.conf /etc/rc.conf
-   sudo cp etc/loader.conf /boot/loader.conf
-   sudo cp etc/sysctl.conf /etc/sysctl.conf
-   sudo mkdir -p /usr/local/etc
-   sudo cp usr_local/etc/ipfw.rules /usr/local/etc/ipfw.rules
-   sudo cp usr_local/etc/ipfw_autoswitch.sh /usr/local/etc/ipfw_autoswitch.sh
-   sudo chmod +x /usr/local/etc/ipfw_autoswitch.sh
-   ```
-
-4. **Enable firewall & fail2ban in `rc.conf`**  
-   Ensure your `/etc/rc.conf` includes:
-   ```sh
-   firewall_enable="YES"
-   firewall_script="/usr/local/etc/ipfw.rules"
-   firewall_logging="YES"
-   fail2ban_enable="YES"
-   ```
-
-5. **Reboot and test**  
+   Or just select the required configuration to add to your file
+   
+4. **Reboot and test**
+   - Run `sudo reboot` to update your config
    - Run `sudo ipfw list` to see if rules are loaded  
    - Test ping, web, captive portal login (e.g. 192.168.1.1)  
    - Check logs: `/var/log/security` and Fail2ban status  
