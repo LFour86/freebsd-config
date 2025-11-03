@@ -3,82 +3,50 @@ cmd="ipfw -q add"
 ipfw -q -f flush  # Flush all existing rules
 
 ### === BASIC & LOCAL TRAFFIC ===
-
-$cmd 10 allow all from any to any via lo0            # Allow all loopback traffic
-$cmd 20 deny all from any to 127.0.0.0/8             # Deny spoofed loopback destination
-$cmd 30 deny all from 127.0.0.0/8 to any             # Deny spoofed loopback source
+$cmd 10 allow all from any to any via lo0
+$cmd 20 deny all from any to 127.0.0.0/8
+$cmd 30 deny all from 127.0.0.0/8 to any
 
 ### === TCP PROTECTION ===
-
-$cmd 40 deny tcp from any to any frag                # Drop fragmented TCP packets
-# Removed FIN/URG/PSH deny rule (too aggressive, slows down legit TCP)
-# $cmd 41 deny tcp from any to any tcpflags fin,urg,psh
+$cmd 40 deny tcp from any to any frag
 
 ### === INTERNAL NETWORKS ===
-
-# Deny inbound spoofed private IPs from WAN
 $cmd 45 deny ip from { 10.0.0.0/8, 172.16.0.0/12 } to any in
-
-# Allow LAN traffic (192.168.x.x)
 $cmd 46 allow ip from 192.168.0.0/16 to any
-
-# Allow access to local gateway or captive portal (e.g., 192.168.1.1)
 $cmd 47 allow ip from any to 192.168.1.1
+$cmd 48 allow ip from any to 172.25.0.0/16       # 新增：允许可能的门户网段
+
+### === DHCP (确保首次获取 IP) ===
+$cmd 130 allow udp from me 68 to any 67 out
+$cmd 131 allow udp from any 67 to me 68 in
+
+### === DNS (门户可能需要) ===
+$cmd 132 allow udp from me to any 53 out
+$cmd 133 allow udp from any to me 53 in
 
 ### === CONNECTION TRACKING ===
+$cmd 50 check-state
+$cmd 60 allow tcp from any to any established
+$cmd 70 allow ip from me to any out keep-state
 
-$cmd 50 check-state                                  # Enable dynamic state checking
-$cmd 60 allow tcp from any to any established        # Allow established TCP sessions
-$cmd 70 allow ip from me to any out keep-state       # Allow outbound connections, keep state
-
-### === ICMP (PING / NETWORK DISCOVERY) ===
-
-# Allow necessary ICMP types for ping and diagnostics
+### === ICMP ===
 $cmd 80 allow icmp from any to me icmptypes 0,3,8,11
 $cmd 82 allow icmp from any to any icmptypes 3,11
 $cmd 85 allow icmp from me to any icmptypes 0 out
 
-### === ALLOWED SERVICES ===
-
-# Common services (if you actually run them; otherwise comment out)
-$cmd 100 allow tcp from any to me 80 in              # Allow HTTP (optional)
-$cmd 101 allow tcp from any to me 443 in             # Allow HTTPS (optional)
-$cmd 120 allow tcp from any to me 22 in              # Allow SSH (optional)
-# DHCP (needed for dynamic IP)
-$cmd 130 allow udp from me 68 to any 67 out
-$cmd 131 allow udp from any 67 to me 68 in
-# DNS
-$cmd 132 allow udp from any to me 53 in
+### === ALLOWED SERVICES (HTTP/HTTPS for portal login) ===
+$cmd 100 allow tcp from any to me 80 in
+$cmd 101 allow tcp from any to me 443 in
 
 ### === LOCAL NETWORK SERVICES ===
-
-# Allow mDNS for printer / AirPlay / discovery
 $cmd 170 allow udp from 192.168.1.0/24 to me 5353 in
 
 ### === LOGGING & SECURITY ===
-
-# Log outbound connections to suspicious ports (crypto mining, etc.)
 $cmd 150 deny log tcp from any to any 8333,4444,5555,31337,6667 out
 $cmd 151 deny log udp from any to any 8333,4444,5555 out
 
-# Optional connection limit for HTTPS server (you likely don’t need it)
-# $cmd 180 allow tcp from any to me 443 in setup limit src-addr 50
-# $cmd 181 allow tcp from any to me 443 established
-
 ### === DEFAULT POLICY ===
-
-# Allow all internal (LAN) traffic
 $cmd 190 allow ip from 192.168.0.0/16 to any
-
-# Allow all outbound traffic (this ensures normal web speed)
 $cmd 191 allow ip from me to any out keep-state
-
-# Allow inbound traffic for established or stateful connections
 $cmd 192 allow ip from any to me in via wlan0 keep-state
-
-# Log only truly suspicious connections
-$cmd 500 deny log tcp from any to any 22,25,8333,4444,5555
-$cmd 501 deny log udp from any to any 22,25,8333,4444,5555
-
-# Final catch-all deny (log to debug unexpected traffic)
 $cmd 999 deny log ip from any to any
