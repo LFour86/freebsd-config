@@ -61,8 +61,8 @@ This configuration aims to deliver:
 4. **Linuxulator & application compatibility**  
    Preconfigured linux compatibility layer with common software support.
 
-5. **Dynamic firewall mode switching**  
-   Scripts to detect public vs private network and apply stricter rules when needed.
+5. **Better firewall mode**  
+   Use scientific and strict ipfw rules to ensure security while not affecting normal internet access.
 
 6. **Stylish TTY / console boot**  
    Enhanced console visuals and cleaner boot output.
