@@ -14,13 +14,13 @@ $cmd 40 deny tcp from any to any frag
 $cmd 45 deny ip from { 10.0.0.0/8, 172.16.0.0/12 } to any in
 $cmd 46 allow ip from 192.168.0.0/16 to any
 $cmd 47 allow ip from any to 192.168.1.1
-$cmd 48 allow ip from any to 172.25.0.0/16       # 新增：允许可能的门户网段
+$cmd 48 allow ip from any to 172.25.0.0/16
 
-### === DHCP (确保首次获取 IP) ===
+### === DHCP ===
 $cmd 130 allow udp from me 68 to any 67 out
 $cmd 131 allow udp from any 67 to me 68 in
 
-### === DNS (门户可能需要) ===
+### === DNS ===
 $cmd 132 allow udp from me to any 53 out
 $cmd 133 allow udp from any to me 53 in
 
